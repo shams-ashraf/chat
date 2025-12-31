@@ -8,11 +8,15 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_MODEL = "llama-3.3-70b-versatile"
 
-if not GROQ_API_KEY:
-    raise ValueError("⚠️ GROQ_API_KEY not set! Please add it to environment variables.")
+import streamlit as st
+
+def get_groq_api_key():
+    return st.session_state.get(
+        "GROQ_API_KEY",
+        os.getenv("GROQ_API_KEY", "")
+    )
 
 GROQ_RATE_LIMIT_UNTIL = 0
 
@@ -105,7 +109,7 @@ ANSWER directly and precisely:"""
         response = requests.post(
             "https://api.groq.com/openai/v1/chat/completions",
             headers={
-                "Authorization": f"Bearer {GROQ_API_KEY}",
+                "Authorization": f"Bearer {get_groq_api_key()}",
                 "Content-Type": "application/json"
             },
             json=data,
@@ -167,7 +171,7 @@ Question:
     response = requests.post(
         "https://api.groq.com/openai/v1/chat/completions",
         headers={
-            "Authorization": f"Bearer {GROQ_API_KEY}",
+            "Authorization": f"Bearer {get_groq_api_key()}",
             "Content-Type": "application/json"
         },
         json={
@@ -191,3 +195,4 @@ def expand_query_multilingual(query, collection):
         )
 
     return expanded_queries
+

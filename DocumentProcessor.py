@@ -77,25 +77,25 @@ def structure_text_into_paragraphs(text):
     if current:
         paragraphs.append(' '.join(current))
     return '\n\n'.join(paragraphs)
-    
 def create_smart_chunks(
-        text,
-        chunk_size=800,
-        overlap=100,
-        page_num=None,
-        source_file=None,
-        is_table=False,
-        table_num=None,
-        lang="en"         
-    ):
-   words = text.split()
-   chunks = []
-   metadata = {
-    'page': str(page_num) if page_num is not None else "N/A",
-    'source': source_file or "Unknown",
-    'is_table': str(is_table),
-    'table_number': str(table_num) if table_num else "N/A",
-    'lang': lang
+    text,
+    chunk_size=800,
+    overlap=100,
+    page_num=None,
+    source_file=None,
+    is_table=False,
+    table_num=None,
+    lang="en"
+):
+    words = text.split()
+    chunks = []
+
+    metadata = {
+        'page': str(page_num) if page_num is not None else "N/A",
+        'source': source_file or "Unknown",
+        'is_table': str(is_table),
+        'table_number': str(table_num) if table_num else "N/A",
+        'lang': lang
     }
 
     if len(words) <= chunk_size:
@@ -108,6 +108,7 @@ def create_smart_chunks(
         chunk_text = " ".join(chunk_words)
         if len(chunk_words) >= 50:
             chunks.append({'content': chunk_text, 'metadata': metadata.copy()})
+
     return chunks
 
 def format_table_as_structured_text(table, table_number=None):
@@ -307,6 +308,7 @@ def get_files_from_folder():
     return glob.glob(os.path.join(DOCS_FOLDER, "*.[pP][dD][fF]")) + \
            glob.glob(os.path.join(DOCS_FOLDER, "*.[dD][oO][cC][xX]")) + \
            glob.glob(os.path.join(DOCS_FOLDER, "*.txt"))
+
 
 
 

@@ -4,6 +4,7 @@ import chromadb
 import os
 import re
 import time
+import shutil 
 from styles import load_custom_css
 
 from DocumentProcessor import (
@@ -158,12 +159,9 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-import shutil   # فوق خالص في الملف مرة واحدة
-
 with st.sidebar:
     
     st.markdown("# 🧬 BioMed Chat")
-    st.sidebar.warning("SIDEBAR IS RUNNING")
 
     if "GROQ_API_KEY" not in st.session_state:
         st.session_state.GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", "ENTER_KEY_HERE")

@@ -158,6 +158,8 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+import shutil   # فوق خالص في الملف مرة واحدة
+
 with st.sidebar:
     st.markdown("# 🧬 BioMed Chat")
 
@@ -171,7 +173,29 @@ with st.sidebar:
         st.session_state.active_chat = cid
         st.rerun()
 
+    # =========================
+    # 🔥 RESET BUTTON (ADD HERE)
+    # =========================
+    st.markdown("### ⚙️ System")
+
+    if st.button("🧹 Reset all documents & index", use_container_width=True):
+        try:
+            if os.path.exists(CHROMA_FOLDER):
+                shutil.rmtree(CHROMA_FOLDER)
+
+            if os.path.exists(CACHE_FOLDER):
+                shutil.rmtree(CACHE_FOLDER)
+
+            st.success("✅ Index & cache deleted. Rebuilding...")
+            time.sleep(1)
+            st.rerun()
+
+        except Exception as e:
+            st.error(f"❌ Reset failed: {e}")
+
+    # =========================
     st.markdown("### 💬 Your Chats")
+
     for cid in reversed(list(st.session_state.chats.keys())):   
         chat = st.session_state.chats[cid]
         col1, col2 = st.columns([4, 1])

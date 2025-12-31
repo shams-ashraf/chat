@@ -178,6 +178,7 @@ with st.sidebar:
     if api_key and api_key != st.session_state.GROQ_API_KEY:
         st.session_state.GROQ_API_KEY = api_key
         st.success("✅ API key updated for this session")
+        st.rerun()   # 🔥 ده السطر السحري
     if st.button("➕ New Chat", use_container_width=True, type="primary"):
         cid = f"chat_{uuid.uuid4().hex[:6]}"
         st.session_state.chats[cid] = {

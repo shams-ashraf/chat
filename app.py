@@ -194,9 +194,9 @@ with st.sidebar:
             st.error(f"❌ Reset failed: {e}")
             
     if "GROQ_API_KEY" not in st.session_state:
-    st.session_state.GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", "")
+            st.session_state.GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", "")
     st.markdown("### 🔑 API Key (Runtime)")
-
+        
     api_key = st.text_input(
         "Groq API Key",
         type="password",

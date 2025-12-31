@@ -168,21 +168,35 @@ Question:
 {query}
 """
 
-    response = requests.post(
-        "https://api.groq.com/openai/v1/chat/completions",
-        headers={
-            "Authorization": f"Bearer {get_groq_api_key()}",
-            "Content-Type": "application/json"
-        },
-        json={
-            "model": GROQ_MODEL,
-            "messages": [{"role": "user", "content": prompt}],
-            "temperature": 0
-        },
-        timeout=30
-    )
+    try:
+        response = requests.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {get_groq_api_key()}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "model": GROQ_MODEL,
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": 0
+            },
+            timeout=30
+        )
 
-    return response.json()["choices"][0]["message"]["content"].strip()
+        response.raise_for_status()
+        data = response.json()
+
+        # ✅ SAFE PARSING
+        if "choices" not in data or not data["choices"]:
+            return query  # fallback
+
+        return data["choices"][0]["message"]["content"].strip()
+
+    except Exception as e:
+        # ✅ NEVER CRASH ON TRANSLATION
+        print("Translation failed:", str(e))
+        return query
+
 
 def expand_query_multilingual(query, collection):
     user_lang = detect_language(query)
@@ -195,4 +209,5 @@ def expand_query_multilingual(query, collection):
         )
 
     return expanded_queries
+
 

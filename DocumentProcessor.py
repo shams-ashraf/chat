@@ -7,6 +7,7 @@ import pickle
 import hashlib
 import docx
 from dotenv import load_dotenv
+from langdetect import detect, DetectorFactory
 
 load_dotenv()
 
@@ -18,7 +19,6 @@ TESSDATA_PATH = os.getenv("TESSDATA_PATH")
 os.makedirs(DOCS_FOLDER, exist_ok=True)
 os.makedirs(CACHE_FOLDER, exist_ok=True)
 
-from langdetect import detect, DetectorFactory
 DetectorFactory.seed = 0
 
 def detect_language_from_text(text):
@@ -308,5 +308,6 @@ def get_files_from_folder():
     return glob.glob(os.path.join(DOCS_FOLDER, "*.[pP][dD][fF]")) + \
            glob.glob(os.path.join(DOCS_FOLDER, "*.[dD][oO][cC][xX]")) + \
            glob.glob(os.path.join(DOCS_FOLDER, "*.txt"))
+
 
 

@@ -18,13 +18,18 @@ TESSDATA_PATH = os.getenv("TESSDATA_PATH")
 os.makedirs(DOCS_FOLDER, exist_ok=True)
 os.makedirs(CACHE_FOLDER, exist_ok=True)
 
-def detect_doc_language(filename):
-    name = filename.lower()
-    if any(x in name for x in ["de", "german", "spo"]):
-        return "de"
-    if any(x in name for x in ["en", "english"]):
+from langdetect import detect, DetectorFactory
+DetectorFactory.seed = 0
+
+def detect_language_from_text(text):
+    try:
+        lang = detect(text)
+        if lang in ["de", "en", "ar"]:
+            return lang
         return "en"
-    return "ar"
+    except:
+        return "en"
+
 
 def get_file_hash(filepath):
     hash_md5 = hashlib.md5()
@@ -76,8 +81,17 @@ def structure_text_into_paragraphs(text):
 def create_smart_chunks(text, chunk_size=800, overlap=100, page_num=None, source_file=None, is_table=False, table_num=None):
     words = text.split()
     chunks = []
-    lang = detect_doc_language(source_file or "")
-    metadata = {
+    def create_smart_chunks(
+        text,
+        chunk_size=800,
+        overlap=100,
+        page_num=None,
+        source_file=None,
+        is_table=False,
+        table_num=None,
+        lang="en"          # 👈 جديد
+    ):
+   metadata = {
     'page': str(page_num) if page_num is not None else "N/A",
     'source': source_file or "Unknown",
     'is_table': str(is_table),
@@ -119,6 +133,8 @@ def extract_pdf_detailed(filepath):
         return None, f"❌ PDF open error: {str(e)}"
 
     filename = os.path.basename(filepath)
+    first_page_text = doc[0].get_text("text")
+    doc_lang = detect_language_from_text(first_page_text)
     file_info = {'chunks': [], 'total_pages': len(doc), 'total_tables': 0}
 
     for page_num in range(len(doc)):
@@ -176,7 +192,7 @@ def extract_pdf_detailed(filepath):
                             combined_text += last_text_block + "\n\n"
 
                     combined_text += table_text
-
+                    
                     table_chunks = create_smart_chunks(
                         combined_text,
                         chunk_size=1800,
@@ -184,8 +200,11 @@ def extract_pdf_detailed(filepath):
                         page_num=page_num + 1,
                         source_file=filename,
                         is_table=True,
-                        table_num=file_info['total_tables']
+                        table_num=file_info['total_tables'],
+                        lang=doc_lang
                     )
+
+
 
                     file_info['chunks'].extend(table_chunks)
 
@@ -194,8 +213,10 @@ def extract_pdf_detailed(filepath):
             chunk_size=800,
             overlap=100,
             page_num=page_num + 1,
-            source_file=filename
+            source_file=filename,
+            lang=doc_lang
         )
+
         file_info['chunks'].extend(page_chunks)
 
     doc.close()
@@ -287,4 +308,5 @@ def get_files_from_folder():
     return glob.glob(os.path.join(DOCS_FOLDER, "*.[pP][dD][fF]")) + \
            glob.glob(os.path.join(DOCS_FOLDER, "*.[dD][oO][cC][xX]")) + \
            glob.glob(os.path.join(DOCS_FOLDER, "*.txt"))
+
 

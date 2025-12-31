@@ -161,8 +161,23 @@ st.markdown("""
 import shutil   # فوق خالص في الملف مرة واحدة
 
 with st.sidebar:
+    
     st.markdown("# 🧬 BioMed Chat")
+    if "GROQ_API_KEY" not in st.session_state:
+        st.session_state.GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", "ENTER_KEY_HERE")
 
+    st.markdown("### 🔑 API Key (Runtime)")
+
+    api_key = st.text_input(
+        "Groq API Key",
+        type="password",
+        value=st.session_state.GROQ_API_KEY,
+        key="groq_api_key_input"
+    )
+
+    if api_key and api_key != st.session_state.GROQ_API_KEY:
+        st.session_state.GROQ_API_KEY = api_key
+        st.success("✅ API key updated for this session")
     if st.button("➕ New Chat", use_container_width=True, type="primary"):
         cid = f"chat_{uuid.uuid4().hex[:6]}"
         st.session_state.chats[cid] = {
@@ -192,20 +207,6 @@ with st.sidebar:
 
         except Exception as e:
             st.error(f"❌ Reset failed: {e}")
-            
-    if "GROQ_API_KEY" not in st.session_state:
-            st.session_state.GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", "")
-    st.markdown("### 🔑 API Key (Runtime)")
-        
-    api_key = st.text_input(
-        "Groq API Key",
-        type="password",
-        value=st.session_state.GROQ_API_KEY
-    )
-    
-    if api_key and api_key != st.session_state.GROQ_API_KEY:
-        st.session_state.GROQ_API_KEY = api_key
-        st.success("✅ API key updated for this session")
 
     # =========================
     st.markdown("### 💬 Your Chats")

@@ -162,23 +162,6 @@ st.markdown("""
 with st.sidebar:
     
     st.markdown("# 🧬 BioMed Chat")
-
-    if "GROQ_API_KEY" not in st.session_state:
-        st.session_state.GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", "ENTER_KEY_HERE")
-
-    st.markdown("### 🔑 API Key (Runtime)")
-
-    api_key = st.text_input(
-        "Groq API Key",
-        type="password",
-        value=st.session_state.GROQ_API_KEY,
-        key="groq_api_key_input"
-    )
-
-    if api_key and api_key != st.session_state.GROQ_API_KEY:
-        st.session_state.GROQ_API_KEY = api_key
-        st.success("✅ API key updated for this session")
-        st.rerun()   # 🔥 ده السطر السحري
     if st.button("➕ New Chat", use_container_width=True, type="primary"):
         cid = f"chat_{uuid.uuid4().hex[:6]}"
         st.session_state.chats[cid] = {
@@ -189,9 +172,6 @@ with st.sidebar:
         st.session_state.active_chat = cid
         st.rerun()
 
-    # =========================
-    # 🔥 RESET BUTTON (ADD HERE)
-    # =========================
     st.markdown("### ⚙️ System")
 
     if st.button("🧹 Reset all documents & index", use_container_width=True):

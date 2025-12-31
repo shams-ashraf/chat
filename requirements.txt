@@ -9,4 +9,4 @@ pytesseract
 Pillow
 opencv-python-headless
 pymupdf-layout==0.0.15
-langdetect
+

@@ -8,15 +8,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_MODEL = "llama-3.3-70b-versatile"
 
-import streamlit as st
-
-def get_groq_api_key():
-    return st.session_state.get(
-        "GROQ_API_KEY",
-        os.getenv("GROQ_API_KEY", "")
-    )
+if not GROQ_API_KEY:
+    raise ValueError("⚠️ GROQ_API_KEY not set! Please add it to environment variables.")
 
 GROQ_RATE_LIMIT_UNTIL = 0
 
@@ -109,7 +105,7 @@ ANSWER directly and precisely:"""
         response = requests.post(
             "https://api.groq.com/openai/v1/chat/completions",
             headers={
-                "Authorization": f"Bearer {get_groq_api_key()}",
+                "Authorization": f"Bearer {GROQ_API_KEY}",
                 "Content-Type": "application/json"
             },
             json=data,
@@ -168,35 +164,21 @@ Question:
 {query}
 """
 
-    try:
-        response = requests.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {get_groq_api_key()}",
-                "Content-Type": "application/json"
-            },
-            json={
-                "model": GROQ_MODEL,
-                "messages": [{"role": "user", "content": prompt}],
-                "temperature": 0
-            },
-            timeout=30
-        )
+    response = requests.post(
+        "https://api.groq.com/openai/v1/chat/completions",
+        headers={
+            "Authorization": f"Bearer {GROQ_API_KEY}",
+            "Content-Type": "application/json"
+        },
+        json={
+            "model": GROQ_MODEL,
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0
+        },
+        timeout=30
+    )
 
-        response.raise_for_status()
-        data = response.json()
-
-        # ✅ SAFE PARSING
-        if "choices" not in data or not data["choices"]:
-            return query  # fallback
-
-        return data["choices"][0]["message"]["content"].strip()
-
-    except Exception as e:
-        # ✅ NEVER CRASH ON TRANSLATION
-        print("Translation failed:", str(e))
-        return query
-
+    return response.json()["choices"][0]["message"]["content"].strip()
 
 def expand_query_multilingual(query, collection):
     user_lang = detect_language(query)
@@ -209,5 +191,3 @@ def expand_query_multilingual(query, collection):
         )
 
     return expanded_queries
-
-

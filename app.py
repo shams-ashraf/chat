@@ -153,7 +153,6 @@ st.markdown("""
     <h3 style="color:#00d9ff;">Try these examples:</h3>
     <ul style="font-size:1.05rem;">
         <li>What are the requirements for registering the master's thesis?</li>
-        <li>Tell me about the internship requirements</li>
         <li>Was sind die Regelungen für die Masterarbeit?</li>
     </ul>
 </div>

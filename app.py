@@ -163,6 +163,8 @@ import shutil   # فوق خالص في الملف مرة واحدة
 with st.sidebar:
     
     st.markdown("# 🧬 BioMed Chat")
+    st.sidebar.warning("SIDEBAR IS RUNNING")
+
     if "GROQ_API_KEY" not in st.session_state:
         st.session_state.GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", "ENTER_KEY_HERE")
 

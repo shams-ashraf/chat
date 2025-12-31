@@ -77,11 +77,8 @@ def structure_text_into_paragraphs(text):
     if current:
         paragraphs.append(' '.join(current))
     return '\n\n'.join(paragraphs)
-
-def create_smart_chunks(text, chunk_size=800, overlap=100, page_num=None, source_file=None, is_table=False, table_num=None):
-    words = text.split()
-    chunks = []
-    def create_smart_chunks(
+    
+def create_smart_chunks(
         text,
         chunk_size=800,
         overlap=100,
@@ -89,8 +86,10 @@ def create_smart_chunks(text, chunk_size=800, overlap=100, page_num=None, source
         source_file=None,
         is_table=False,
         table_num=None,
-        lang="en"          # 👈 جديد
+        lang="en"         
     ):
+   words = text.split()
+   chunks = []
    metadata = {
     'page': str(page_num) if page_num is not None else "N/A",
     'source': source_file or "Unknown",
@@ -308,6 +307,7 @@ def get_files_from_folder():
     return glob.glob(os.path.join(DOCS_FOLDER, "*.[pP][dD][fF]")) + \
            glob.glob(os.path.join(DOCS_FOLDER, "*.[dD][oO][cC][xX]")) + \
            glob.glob(os.path.join(DOCS_FOLDER, "*.txt"))
+
 
 
 
